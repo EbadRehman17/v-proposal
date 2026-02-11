@@ -1,21 +1,31 @@
+let scaleFactor = 1;
+
 function moveButton() {
-    var x = Math.random() * (window.innerWidth - 85 - 85);
-    var y = Math.random() * (window.innerHeight - 48 - 48);
+    const noBtn = document.getElementById('noBtn');
     
-    var noBtn = document.querySelector('.no-btn');
+    // 1. Calculate random position within the window
+    // Subtracting button dimensions to keep it on screen
+    const x = Math.random() * (window.innerWidth - 150);
+    const y = Math.random() * (window.innerHeight - 80);
+    
+    // 2. Change position to 'fixed' so it breaks out of the container layout
+    // This allows it to jump anywhere on the screen
+    noBtn.style.position = 'fixed';
     noBtn.style.left = `${x}px`;
     noBtn.style.top = `${y}px`;
+    
+    // 3. Make Yes button grow (optional, keeps the fun effect)
+    scaleFactor += 0.2;
+    const yesBtn = document.getElementById('yesBtn');
+    yesBtn.style.transform = `scale(${scaleFactor})`;
 }
 
 function handleYesClick() {
-    // Hide the buttons and header
-    document.querySelector('.buttons').style.display = 'none';
-    document.querySelector('h1').style.display = 'none';
+    // Replace the entire container content with the success message
+    document.querySelector('.container').innerHTML = `
+        <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" alt="Happy Bear" style="width: 300px;">
+        <h1 style="font-size: 3rem; color: #4CAF50;">Yay! See you on the 14th! ❤️</h1>
+    `;
     
-    // Show the success message
-    var successMessage = document.getElementById('successMessage');
-    successMessage.style.display = 'block';
-    
-    // Optional: Add confetti or change background here
     document.body.style.backgroundColor = "#ffcccc";
 }
