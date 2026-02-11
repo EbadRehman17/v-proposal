@@ -2,26 +2,31 @@ let scaleFactor = 1;
 
 function moveButton() {
     const noBtn = document.getElementById('noBtn');
-    
-    // 1. Calculate random position within the window
-    // Subtracting button dimensions to keep it on screen
-    const x = Math.random() * (window.innerWidth - 150);
-    const y = Math.random() * (window.innerHeight - 80);
-    
-    // 2. Change position to 'fixed' so it breaks out of the container layout
-    // This allows it to jump anywhere on the screen
-    noBtn.style.position = 'fixed';
-    noBtn.style.left = `${x}px`;
-    noBtn.style.top = `${y}px`;
-    
-    // 3. Make Yes button grow (optional, keeps the fun effect)
-    scaleFactor += 0.2;
     const yesBtn = document.getElementById('yesBtn');
+
+    // Get the exact width/height of the button to ensure it stays on screen
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
+
+    // Calculate random position
+    // We subtract the button size so it doesn't clip off the right/bottom edge
+    const maxX = window.innerWidth - btnWidth;
+    const maxY = window.innerHeight - btnHeight;
+
+    const newX = Math.random() * maxX;
+    const newY = Math.random() * maxY;
+
+    // Apply the new position
+    noBtn.style.position = 'fixed'; // Switch to fixed positioning
+    noBtn.style.left = `${newX}px`;
+    noBtn.style.top = `${newY}px`;
+
+    // Make Yes button grow
+    scaleFactor += 0.2;
     yesBtn.style.transform = `scale(${scaleFactor})`;
 }
 
 function handleYesClick() {
-    // Replace the entire container content with the success message
     document.querySelector('.container').innerHTML = `
         <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" alt="Happy Bear" style="width: 300px;">
         <h1 style="font-size: 3rem; color: #4CAF50;">Yay! See you on the 14th! ❤️</h1>
