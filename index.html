@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Be My Valentine?</title>
     <style>
         body {
@@ -14,19 +14,22 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             overflow: hidden; /* Stops scrollbars */
+            touch-action: manipulation; /* Improves touch response */
         }
 
         .container {
             text-align: center;
             position: relative;
             z-index: 10;
+            width: 100%;
         }
 
         h1 {
             color: #ff4d4d;
-            font-size: 3rem;
+            font-size: 2.5rem; /* Slightly smaller for mobile */
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            padding: 0 10px;
         }
 
         .sub-text {
@@ -55,6 +58,7 @@
             outline: none;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             white-space: nowrap;
+            -webkit-tap-highlight-color: transparent; /* Removes blue highlight on mobile */
         }
 
         .yes-btn {
@@ -76,15 +80,9 @@
             left: 0;
             width: 100%;
             z-index: 10; /* On top of the Yes button */
-            transition: 0.2s; /* Fast movement */
+            transition: 0s; /* Instant movement on mobile */
         }
         
-        /* This class is added by JS to make the No button float freely */
-        .floating {
-            position: fixed;
-            z-index: 100;
-        }
-
         /* Canvas for confetti */
         #confetti-canvas {
             position: fixed;
@@ -108,86 +106,16 @@
         
         <div class="button-wrapper">
             <button class="yes-btn" id="yesBtn" onclick="clickYes()">Yes</button>
-            <button class="no-btn" id="noBtn" onmouseover="moveNoButton()" onclick="moveNoButton()">No</button>
+            <button class="no-btn" id="noBtn">No</button>
         </div>
     </div>
 
     <script>
         let scaleFactor = 1;
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
         const canvas = document.getElementById('confetti-canvas');
         const ctx = canvas.getContext('2d');
 
-        function moveNoButton() {
-            const noBtn = document.getElementById('noBtn');
-            const yesBtn = document.getElementById('yesBtn');
-
-            const maxWidth = window.innerWidth;
-            const maxHeight = window.innerHeight;
-
-            const btnWidth = noBtn.offsetWidth || 150; 
-            const btnHeight = noBtn.offsetHeight || 60;
-
-            const randomX = Math.random() * (maxWidth - btnWidth - 40) + 20;
-            const randomY = Math.random() * (maxHeight - btnHeight - 40) + 20;
-
-            noBtn.style.position = 'fixed'; 
-            noBtn.style.left = randomX + 'px';
-            noBtn.style.top = randomY + 'px';
-
-            scaleFactor += 0.2;
-            yesBtn.style.transform = `scale(${scaleFactor})`;
-        }
-
-        function clickYes() {
-            const container = document.getElementById('mainContainer');
-            
-            // Replaced content with just the text
-            container.innerHTML = `
-                <h1 style="font-size: 4rem; color: #4CAF50;">Yay! See you on the 14th! ❤️</h1>
-            `;
-            
-            document.body.style.backgroundColor = "#ffcccc";
-            startConfetti();
-        }
-
-        function startConfetti() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            const particles = [];
-            const particleCount = 300;
-
-            for (let i = 0; i < particleCount; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height - canvas.height,
-                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                    size: Math.random() * 10 + 5,
-                    speedY: Math.random() * 3 + 2,
-                    speedX: Math.random() * 2 - 1
-                });
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach((p) => {
-                    p.y += p.speedY;
-                    p.x += p.speedX;
-                    
-                    ctx.fillStyle = p.color;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    if (p.y > canvas.height) {
-                        p.y = -10;
-                        p.x = Math.random() * canvas.width;
-                    }
-                });
-                requestAnimationFrame(animate);
-            }
-            animate();
-        }
-    </script>
-</body>
-</html>
+        // --- MOBILE SUPPORT START ---
+        // We use 'touchstart' for
