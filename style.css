@@ -28,14 +28,14 @@ h1 {
     margin-bottom: 30px;
 }
 
-/* New Wrapper to stack buttons */
 .button-wrapper {
     position: relative;
     display: inline-block;
-    width: 150px;  /* Approximate width of the buttons */
-    height: 60px;  /* Approximate height of the buttons */
+    width: 150px;
+    height: 60px;
 }
 
+/* General button styles */
 button {
     font-size: 1.5rem;
     padding: 15px 40px;
@@ -43,26 +43,28 @@ button {
     border-radius: 50px;
     cursor: pointer;
     font-weight: bold;
-    transition: all 0.3s ease;
 }
 
+/* YES Button: smooth transition for growing */
 .yes-btn {
     background-color: #4CAF50;
     color: white;
-    position: absolute; /* Fixes it to the wrapper */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1; /* Sits behind */
+    z-index: 1;
+    transition: transform 0.3s ease; /* Only animate size changes */
 }
 
+/* NO Button: Instant movement, no transition lags */
 .no-btn {
     background-color: #f44336;
     color: white;
-    position: absolute; /* Fixes it to the wrapper initially */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 10; /* Sits on top */
-    opacity: 0.9; /* Slightly see-through so they know Yes is under there */
+    z-index: 100; /* Ensure it's always on top */
+    transition: 0s; /* IMPORTANT: No animation so it snaps instantly */
 }
