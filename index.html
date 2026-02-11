@@ -8,12 +8,17 @@
 </head>
 <body>
     <div class="container">
-        <div class="tenor-gif-embed" data-postid="22050818" data-share-method="host" data-aspect-ratio="1" data-width="100%"></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+        <div class="gif-container">
+            <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" alt="Cute Bear">
+        </div>
+        
         <h1>Will you be my Valentine? 🌹</h1>
+        
         <div class="buttons">
-            <button class="yes-btn" onclick="handleYesClick()">Yes</button>
+            <button class="yes-btn" id="yesBtn" onclick="handleYesClick()">Yes</button>
             <button class="no-btn" onmouseover="moveButton()" onclick="moveButton()">No</button>
         </div>
+
         <div class="success-message" id="successMessage" style="display: none;">
             <h1 class="yay-text">Yay! See you on the 14th! ❤️</h1>
         </div>
