@@ -3,49 +3,66 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #ffe6e6; /* Light pink background */
+    background-color: #ffe6e6;
     font-family: 'Arial', sans-serif;
     margin: 0;
-    overflow: hidden; /* Prevents scrollbars when button moves */
+    overflow: hidden; 
 }
 
 .container {
     text-align: center;
     position: relative;
+    z-index: 1;
+}
+
+img {
+    max-width: 200px;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
 }
 
 h1 {
     color: #ff4d4d;
-    font-size: 3rem;
-    margin-bottom: 20px;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
 }
 
-.buttons {
-    margin-top: 20px;
+/* New Wrapper to stack buttons */
+.button-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 150px;  /* Approximate width of the buttons */
+    height: 60px;  /* Approximate height of the buttons */
 }
 
 button {
     font-size: 1.5rem;
-    padding: 10px 20px;
-    margin: 10px;
+    padding: 15px 40px;
     border: none;
-    border-radius: 10px;
+    border-radius: 50px;
     cursor: pointer;
-    transition: transform 0.2s;
+    font-weight: bold;
+    transition: all 0.3s ease;
 }
 
 .yes-btn {
-    background-color: #4CAF50; /* Green */
+    background-color: #4CAF50;
     color: white;
-}
-
-.yes-btn:hover {
-    background-color: #45a049;
-    transform: scale(1.1);
+    position: absolute; /* Fixes it to the wrapper */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1; /* Sits behind */
 }
 
 .no-btn {
-    background-color: #f44336; /* Red */
+    background-color: #f44336;
     color: white;
-    position: absolute; /* Allows free movement */
+    position: absolute; /* Fixes it to the wrapper initially */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10; /* Sits on top */
+    opacity: 0.9; /* Slightly see-through so they know Yes is under there */
 }
