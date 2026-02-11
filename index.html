@@ -19,22 +19,22 @@
         .container {
             text-align: center;
             position: relative;
-            z-index: 1;
-        }
-
-        img {
-            max-width: 250px;
-            height: auto;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 10;
         }
 
         h1 {
             color: #ff4d4d;
-            font-size: 2.5rem;
-            margin-bottom: 30px;
+            font-size: 3rem;
+            margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .sub-text {
+            color: #ff4d4d;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            font-style: italic;
+            opacity: 0.8;
         }
 
         /* Wrapper that holds both buttons in the center */
@@ -54,6 +54,7 @@
             font-weight: bold;
             outline: none;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            white-space: nowrap;
         }
 
         .yes-btn {
@@ -83,16 +84,27 @@
             position: fixed;
             z-index: 100;
         }
+
+        /* Canvas for confetti */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Let clicks pass through */
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
 
+    <canvas id="confetti-canvas"></canvas>
+
     <div class="container" id="mainContainer">
-        <div class="gif-container">
-            <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" alt="Cute Bear">
-        </div>
         
         <h1>Will you be my Valentine? 🌹</h1>
+        <p class="sub-text">(don't press no)</p>
         
         <div class="button-wrapper">
             <button class="yes-btn" id="yesBtn" onclick="clickYes()">Yes</button>
@@ -102,48 +114,79 @@
 
     <script>
         let scaleFactor = 1;
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
 
         function moveNoButton() {
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
 
-            // 1. Get the viewport width/height (visible screen size)
             const maxWidth = window.innerWidth;
             const maxHeight = window.innerHeight;
 
-            // 2. Get the button size (fallback to 150x60 if not detected)
             const btnWidth = noBtn.offsetWidth || 150; 
             const btnHeight = noBtn.offsetHeight || 60;
 
-            // 3. Calculate a random position
-            // We subtract the button size to ensure it doesn't go off-screen
-            const randomX = Math.random() * (maxWidth - btnWidth - 20);
-            const randomY = Math.random() * (maxHeight - btnHeight - 20);
+            const randomX = Math.random() * (maxWidth - btnWidth - 40) + 20;
+            const randomY = Math.random() * (maxHeight - btnHeight - 40) + 20;
 
-            // 4. Apply the new position
-            noBtn.classList.add('floating'); // Switch to fixed positioning
+            noBtn.style.position = 'fixed'; 
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
 
-            // 5. Make the Yes button grow
             scaleFactor += 0.2;
             yesBtn.style.transform = `scale(${scaleFactor})`;
         }
 
         function clickYes() {
-            // Debugging check (check console if this doesn't work)
-            console.log("Yes clicked!");
-
             const container = document.getElementById('mainContainer');
             
-            // Replace the entire container content with the success message
+            // Replaced content with just the text
             container.innerHTML = `
-                <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" alt="Happy Bear" style="width: 300px;">
-                <h1 style="font-size: 3rem; color: #4CAF50;">Yay! See you on the 14th! ❤️</h1>
+                <h1 style="font-size: 4rem; color: #4CAF50;">Yay! See you on the 14th! ❤️</h1>
             `;
             
-            // Change background color to celebrate
             document.body.style.backgroundColor = "#ffcccc";
+            startConfetti();
+        }
+
+        function startConfetti() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const particleCount = 300;
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    size: Math.random() * 10 + 5,
+                    speedY: Math.random() * 3 + 2,
+                    speedX: Math.random() * 2 - 1
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p) => {
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    if (p.y > canvas.height) {
+                        p.y = -10;
+                        p.x = Math.random() * canvas.width;
+                    }
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
         }
     </script>
 </body>
