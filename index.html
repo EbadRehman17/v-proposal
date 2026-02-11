@@ -14,7 +14,11 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             overflow: hidden;
-            touch-action: none; /* Disables zooming/scrolling to focus on the game */
+            touch-action: none; /* Disables zooming/scrolling */
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+/Edge */
+            user-select: none; /* Standard */
         }
 
         .container {
@@ -103,12 +107,8 @@
         <p class="sub-text">(don't press no)</p>
         
         <div class="button-wrapper">
-            <button class="yes-btn" id="yesBtn" onclick="clickYes()">Yes</button>
-            
-            <button class="no-btn" id="noBtn" 
-                ontouchstart="moveNoButton(event)" 
-                onmouseover="moveNoButton(event)" 
-                onclick="moveNoButton(event)">No</button>
+            <button class="yes-btn" id="yesBtn">Yes</button>
+            <button class="no-btn" id="noBtn">No</button>
         </div>
     </div>
 
@@ -119,12 +119,95 @@
         const canvas = document.getElementById('confetti-canvas');
         const ctx = canvas.getContext('2d');
 
-        function moveNoButton(event) {
-            // Prevent the default touch action (zooming/scrolling)
-            if(event) event.preventDefault();
+        // ============================
+        //  AGGRESSIVE EVENT LISTENERS
+        // ============================
+        
+        // 1. Desktop Hover
+        noBtn.addEventListener('mouseover', moveNoButton);
+        
+        // 2. Mobile Tap / Mouse Click
+        // 'pointerdown' covers both mouse clicks and touch taps instantly
+        noBtn.addEventListener('pointerdown', moveNoButton); 
+        noBtn.addEventListener('touchstart', moveNoButton); 
+        noBtn.addEventListener('click', moveNoButton);
+
+        // 3. Yes Button Logic
+        yesBtn.addEventListener('click', clickYes);
+
+        function moveNoButton(e) {
+            // Stop any default behavior (like simulating a click after a tap)
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
 
             const maxWidth = window.innerWidth;
             const maxHeight = window.innerHeight;
 
             const btnWidth = noBtn.offsetWidth || 150; 
-            const btnHeight = noBtn.offsetHeight
+            const btnHeight = noBtn.offsetHeight || 60;
+
+            // Random position with safety buffer
+            const randomX = Math.random() * (maxWidth - btnWidth - 20) + 10;
+            const randomY = Math.random() * (maxHeight - btnHeight - 20) + 10;
+
+            // Apply new position
+            noBtn.style.position = 'fixed'; 
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+
+            // Grow Yes button
+            scaleFactor += 0.2;
+            yesBtn.style.transform = `scale(${scaleFactor})`;
+        }
+
+        function clickYes() {
+            const container = document.getElementById('mainContainer');
+            
+            container.innerHTML = `
+                <h1 style="font-size: 3rem; color: #4CAF50; padding: 20px;">Yay! See you on the 14th! ❤️</h1>
+            `;
+            
+            document.body.style.backgroundColor = "#ffcccc";
+            startConfetti();
+        }
+
+        function startConfetti() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const particles = [];
+
+            for (let i = 0; i < 300; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    size: Math.random() * 8 + 4,
+                    speedY: Math.random() * 3 + 2,
+                    speedX: Math.random() * 2 - 1
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p) => {
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    if (p.y > canvas.height) {
+                        p.y = -10;
+                        p.x = Math.random() * canvas.width;
+                    }
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+    </script>
+</body>
+</html>
